@@ -32,3 +32,9 @@ coverage/
 
 # Cache
 .cache/
+
+# SQLite Database
+data/
+*.db
+*.sqlite
+*.sqlite3
