@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -13,9 +14,17 @@ import { Role } from '../roles/entities/role.entity';
   imports: [
     TypeOrmModule.forFeature([User, UserRole, Role]),
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'default-secret',
-      signOptions: { expiresIn: '1h' as any },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('JWT_SECRET') || 'default-secret';
+        console.log('🔑 AuthModule JWT secret:', secret);
+        return {
+          secret,
+          signOptions: { expiresIn: '1h' as any },
+        };
+      },
     }),
   ],
   controllers: [AuthController],
