@@ -11,6 +11,8 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { UnitsModule } from './modules/units/units.module';
 import { ProductsModule } from './modules/products/products.module';
 import { ServiceTypesModule } from './modules/service-types/service-types.module';
+import { CashSessionsModule } from './modules/cash-sessions/cash-sessions.module';
+import { TransactionsModule } from './modules/transactions/transactions.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { ServiceTypesModule } from './modules/service-types/service-types.module
     UnitsModule,
     ProductsModule,
     ServiceTypesModule,
+    CashSessionsModule,
+    TransactionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
