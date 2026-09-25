@@ -13,6 +13,7 @@ import { ProductsModule } from './modules/products/products.module';
 import { ServiceTypesModule } from './modules/service-types/service-types.module';
 import { CashSessionsModule } from './modules/cash-sessions/cash-sessions.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
+import { InventoryModule } from './modules/inventory/inventory.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TransactionsModule } from './modules/transactions/transactions.module';
     ServiceTypesModule,
     CashSessionsModule,
     TransactionsModule,
+    InventoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
