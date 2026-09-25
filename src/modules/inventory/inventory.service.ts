@@ -23,25 +23,37 @@ export class InventoryService {
     return `PO-${ymd}-${String(count + 1).padStart(4, '0')}`;
   }
 
+  /**
+   * Konversi qty dari satuan input ke satuan dasar (lembar, pcs, dst).
+   * Return faktor konversi: 1 rim = 500, 1 lusin = 12, selain itu = 1
+   */
+  private getKonversiFaktor(satuan: string): number {
+    if (satuan === 'rim') return 500;
+    if (satuan === 'lusin') return 12;
+    return 1;
+  }
+
   async stockIn(userId: number, dto: StockInDto) {
     const purchase_no = await this.generatePurchaseNo();
     let total = 0;
 
-    // Hitung total dulu
+    // Hitung total & konversi qty dulu
     const itemsWithDasar = await Promise.all(
       dto.items.map(async (item) => {
         const product = await this.productRepo.findOne({ where: { id: item.product_id } });
         if (!product) throw new NotFoundException(`Produk ID ${item.product_id} tidak ditemukan`);
 
-        // Konversi qty ke satuan dasar (sederhana: 1 rim = 500 lembar untuk kertas)
-        let qtyDasar = item.qty;
-        if (item.satuan === 'rim') qtyDasar = item.qty * 500;
-        else if (item.satuan === 'lusin') qtyDasar = item.qty * 12;
+        const faktor = this.getKonversiFaktor(item.satuan);
+        const qtyDasar = item.qty * faktor;
+
+        // Harga beli per satuan dasar (mis. per lembar)
+        // Contoh: beli 5 rim @ 45.000 → 45.000 / 500 = 90 per lembar
+        const hargaBeliPerDasar = item.harga_beli / faktor;
 
         const subtotal = item.qty * item.harga_beli;
         total += subtotal;
 
-        return { ...item, product, qtyDasar, subtotal };
+        return { ...item, product, qtyDasar, hargaBeliPerDasar, subtotal };
       }),
     );
 
@@ -57,22 +69,23 @@ export class InventoryService {
 
     // Simpan items & update stok
     for (const item of itemsWithDasar) {
+      // purchase_items simpan harga_beli ORIGINAL (per rim) — sebagai historical
       await this.purchaseItemRepo.save({
         purchase_id: purchase.id,
         product_id: item.product_id,
         qty: item.qty,
         satuan: item.satuan,
         qty_dasar: item.qtyDasar,
-        harga_beli: item.harga_beli,
+        harga_beli: item.harga_beli, // original (per rim)
         subtotal: item.subtotal,
       });
 
       const stokSebelum = Number(item.product.stok_qty);
       const stokSesudah = stokSebelum + item.qtyDasar;
 
-      // Update produk
+      // Update produk: stok dalam satuan dasar, harga_beli dalam satuan dasar
       item.product.stok_qty = stokSesudah;
-      item.product.harga_beli = item.harga_beli;
+      item.product.harga_beli = item.hargaBeliPerDasar; // <-- per lembar (base unit)
       await this.productRepo.save(item.product);
 
       // Catat movement
@@ -80,25 +93,34 @@ export class InventoryService {
         product_id: item.product_id,
         tipe: 'masuk',
         qty: item.qtyDasar,
-        satuan: item.satuan,
+        satuan: 'lembar', // simpan dalam satuan dasar
         stok_sebelum: stokSebelum,
         stok_sesudah: stokSesudah,
         referensi_id: purchase.id,
-        keterangan: `Pembelian ${purchase_no}`,
+        keterangan: `Pembelian ${purchase_no} (${item.qty} ${item.satuan} @ Rp${item.harga_beli.toLocaleString('id-ID')})`,
         user_id: userId,
       });
     }
 
-    return { ...purchase, items: itemsWithDasar.map(i => ({ product_id: i.product_id, nama: i.product.nama, qty: i.qty, qty_dasar: i.qtyDasar })) };
+    return {
+      ...purchase,
+      items: itemsWithDasar.map((i) => ({
+        product_id: i.product_id,
+        nama: i.product.nama,
+        qty: i.qty,
+        satuan: i.satuan,
+        qty_dasar: i.qtyDasar,
+        harga_beli_per_dasar: i.hargaBeliPerDasar,
+      })),
+    };
   }
 
   async stockAdjust(userId: number, dto: StockAdjustDto) {
     const product = await this.productRepo.findOne({ where: { id: dto.product_id } });
     if (!product) throw new NotFoundException('Produk tidak ditemukan');
 
-    let qtyDasar = dto.qty;
-    if (dto.satuan === 'rim') qtyDasar = dto.qty * 500;
-    else if (dto.satuan === 'lusin') qtyDasar = dto.qty * 12;
+    const faktor = this.getKonversiFaktor(dto.satuan);
+    const qtyDasar = dto.qty * faktor;
 
     const stokSebelum = Number(product.stok_qty);
     if (stokSebelum < qtyDasar) {
@@ -113,7 +135,7 @@ export class InventoryService {
       product_id: dto.product_id,
       tipe: dto.tipe,
       qty: qtyDasar,
-      satuan: dto.satuan,
+      satuan: 'lembar',
       stok_sebelum: stokSebelum,
       stok_sesudah: stokSesudah,
       keterangan: dto.keterangan,
