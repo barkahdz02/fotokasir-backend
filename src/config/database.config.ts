@@ -1,12 +1,15 @@
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+﻿import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 export const databaseConfig = (): TypeOrmModuleOptions => ({
-  type: 'better-sqlite3',
-  database: process.env.DATABASE_PATH || './data/fotokasir.db',
+  type: 'postgres',
+  url: process.env.DATABASE_URL,
   entities: [__dirname + '/../modules/**/*.entity{.ts,.js}'],
-  synchronize: false,
+  synchronize: false, // SEMENTARA: auto-create tables. Nanti ubah ke false.
   logging: process.env.NODE_ENV === 'development',
   migrations: [__dirname + '/../database/migrations/*{.ts,.js}'],
   migrationsRun: false,
   autoLoadEntities: true,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Unique } from 'typeorm';
+﻿import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Unique } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Role } from './role.entity';
 
@@ -17,7 +17,7 @@ export class UserRole {
   @Column({ default: 1 })
   is_active: number;
 
-  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   assigned_at: Date;
 
   @Column({ nullable: true })

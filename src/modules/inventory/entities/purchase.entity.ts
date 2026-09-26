@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+﻿import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('purchases')
 export class Purchase {
@@ -14,7 +14,7 @@ export class Purchase {
   @Column({ length: 150, nullable: true })
   supplier_nama: string;
 
-  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   tanggal: Date;
 
   @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
@@ -29,6 +29,6 @@ export class Purchase {
   @Column({ nullable: true })
   user_id: number;
 
-  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 }

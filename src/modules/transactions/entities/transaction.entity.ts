@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+﻿import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('transactions')
 export class Transaction {
@@ -41,6 +41,6 @@ export class Transaction {
   @Column({ length: 100, nullable: true })
   pelanggan_nama: string;
 
-  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 }

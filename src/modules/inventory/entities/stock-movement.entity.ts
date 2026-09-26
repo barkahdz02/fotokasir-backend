@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+﻿import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('stock_movements')
 export class StockMovement {
@@ -32,6 +32,6 @@ export class StockMovement {
   @Column({ nullable: true })
   user_id: number;
 
-  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 }

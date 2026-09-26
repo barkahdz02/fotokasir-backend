@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+﻿import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('service_prices')
 export class ServicePrice {
@@ -23,6 +23,6 @@ export class ServicePrice {
   @Column({ default: 1 })
   is_active: number;
 
-  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 }

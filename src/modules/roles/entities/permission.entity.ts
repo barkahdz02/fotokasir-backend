@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+﻿import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { RolePermission } from './role-permission.entity';
 
 @Entity('permissions')
@@ -18,7 +18,7 @@ export class Permission {
   @Column({ type: 'text', nullable: true })
   deskripsi: string;
 
-  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 
   @OneToMany(() => RolePermission, (rp) => rp.permission)

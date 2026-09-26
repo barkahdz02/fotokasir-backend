@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+﻿import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('cash_sessions')
 export class CashSession {
@@ -8,10 +8,10 @@ export class CashSession {
   @Column()
   kasir_id: number;
 
-  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   waktu_buka: Date;
 
-  @Column({ type: 'datetime', nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   waktu_tutup: Date;
 
   @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
@@ -41,6 +41,6 @@ export class CashSession {
   @Column({ length: 20, default: 'buka' })
   status: string;
 
-  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 }

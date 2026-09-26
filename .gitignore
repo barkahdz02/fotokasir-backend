@@ -38,3 +38,9 @@ data/
 *.db
 *.sqlite
 *.sqlite3
+# Environment
+.env
+.env.local
+node_modules
+dist
+data/*.db

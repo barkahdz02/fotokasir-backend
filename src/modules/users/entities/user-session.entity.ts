@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+﻿import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity('user_sessions')
@@ -15,13 +15,13 @@ export class UserSession {
   @Column({ unique: true, length: 100, nullable: true })
   token_jti: string;
 
-  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   login_at: Date;
 
-  @Column({ type: 'datetime', nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   logout_at: Date;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'timestamp' })
   expires_at: Date;
 
   @Column({ length: 45, nullable: true })

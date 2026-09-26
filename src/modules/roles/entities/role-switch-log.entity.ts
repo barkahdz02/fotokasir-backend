@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+﻿import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('role_switch_logs')
 export class RoleSwitchLog {
@@ -14,7 +14,7 @@ export class RoleSwitchLog {
   @Column({ length: 30 })
   ke_role: string;
 
-  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   waktu: Date;
 
   @Column({ length: 45, nullable: true })
